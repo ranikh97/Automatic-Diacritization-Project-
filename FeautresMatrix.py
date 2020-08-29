@@ -2,6 +2,8 @@ import numpy as np
 import pickle
 from scipy.sparse import csr_matrix, hstack
 
+from History import History
+
 with open('Dataset_with_shaddah/id_to_letter_memm.pickle', 'rb') as file:
     letterIDs = pickle.load(file)
 with open('Dataset_with_shaddah/id_to_diacritic_memm.pickle', 'rb') as file2:
@@ -10,6 +12,10 @@ with open('Dataset_with_shaddah/id_to_word_memm.pickle', 'rb') as file3:
     wordIDs = pickle.load(file3)
 with open('Dataset_with_shaddah/word_count.pickle', 'rb') as file4:
     wordCounts = pickle.load(file4)
+with open('Dataset_with_shaddah/word_to_id_memm.pickle', 'rb') as file5:
+    wordToID = pickle.load(file5)
+with open('Dataset_with_shaddah/letter_to_id_memm.pickle', 'rb') as file6:
+    letterToID = pickle.load(file6)
 
 
 def to1D(x, y, z, xMax, yMax):
@@ -26,17 +32,19 @@ class FeaturesMatrix:
         self.prevTag_currLetter_tag = {}
         self.currWord_tag = {}
         self.prevWord_currWord_tag = {}
+
         self.lettersNum = len(letterIDs)
         self.diacriticsNum = len(diacriticIDs)
 
-        frequentWords = [id for id in wordIDs.keys() if wordCounts[wordIDs[id]] > 5]
-        self.wordsNum = len(frequentWords)
+        self.frequentWords = [id for id in wordIDs.keys() if wordCounts[wordIDs[id]] > 5]
+        self.wordsNum = len(self.frequentWords)
         self.frequent_to_original_ID = {}
         self.original_to_frequent_ID = {}
         i = 0
-        for id in frequentWords:
+        for id in self.frequentWords:
             self.frequent_to_original_ID[i] = id
             self.original_to_frequent_ID[id] = i
+            i += 1
 
         data = np.array([1])
         row = np.array([0])
@@ -112,32 +120,60 @@ class FeaturesMatrix:
                                    shape=(1, self.wordsNum**2 * self.diacriticsNum),
                                    dtype=np.int8)
 
+    def get_currLetter_tag(self, letter, tag):
+        return self.currLetter_tag[(letter, tag)]
 
-def globalFeatures(self, history):
+    def get_prevLetter_currLetter_tag(self, prevLetter, currLetter, tag):
+        return self.prevLetter_currLetter_tag[(prevLetter, currLetter, tag)]
+
+    def get_currLetter_nextLetter_tag(self, currLetter, nextLetter, tag):
+        return self.currLetter_nextLetter_tag[(currLetter, nextLetter, tag)]
+
+    def get_prevTag_tag(self, prevTag, tag):
+        return self.prevTag_tag[(prevTag, tag)]
+
+    def get_prevTag2_prevTag_tag(self, prevTag2, prevTag, tag):
+        return self.prevTag2_prevTag_tag[(prevTag2, prevTag, tag)]
+
+    def get_prevTag_currLetter_tag(self, prevTag, currLetter, tag):
+        return self.prevTag_currLetter_tag[(prevTag, currLetter, tag)]
+
+    def get_currWord_tag(self, currWord, tag):
+        if currWord not in self.frequentWords:
+            return csr_matrix((1, self.wordsNum*self.diacriticsNum), dtype=np.int8)
+        return self.currWord_tag[(currWord, tag)]
+
+    def get_prevWord_currWord_tag(self, prevWord, currWord, tag):
+        if currWord not in self.frequentWords:
+            return csr_matrix((1, self.wordsNum**2 * self.diacriticsNum), dtype=np.int8)
+        return self.prevWord_currWord_tag[(prevWord, currWord, tag)]
+
+
+def calcGlobalFeatures(history):
     indicators = []
     cols = []
     rows = []
 
     # Check if first letter in word
-    if history.position_in_word == 0:
+    if history.get_position_in_word() == 0:
         indicators.append(1)
         cols.append(0)
         rows.append(0)
 
     # Check if last letter in word
-    if history.nextLetter is None:
+    if history.get_next_letter() in [letterToID[" "], letterToID["*"]]:
         indicators.append(1)
         cols.append(1)
         rows.append(0)
 
     # Check if first word
-    if len(history.prev_word) == 0:
+    if history.get_prev_word() == wordToID["*"]:
         indicators.append(1)
         cols.append(2)
         rows.append(0)
 
     # Check if last word
-    if len(history.next_word) == 0:
+    if history.get_next_word() == wordToID["*"]:
         indicators.append(1)
         cols.append(3)
         rows.append(0)
@@ -148,16 +184,40 @@ def globalFeatures(self, history):
     return csr_matrix((data, (row, col)), shape=(1, 4), dtype=np.int8)
 
 
-def generateFeatures(history, tag):
-    pass
+def generateFeatures(features: FeaturesMatrix, history: History, tag):
+    features_list = []
+    features_list.append(features.get_currLetter_tag(history.get_current_letter(),
+                                                     tag))
+    features_list.append(features.get_prevLetter_currLetter_tag(history.get_prev_letter(),
+                                                                history.get_current_letter(),
+                                                                tag))
+    features_list.append(features.get_currLetter_nextLetter_tag(history.get_current_letter(),
+                                                                history.get_next_letter(),
+                                                                tag))
+    features_list.append(features.get_prevTag_tag(history.get_prev_label1(),
+                                                  tag))
+    features_list.append(features.get_prevTag2_prevTag_tag(history.get_prev_label2(),
+                                                           history.get_prev_label1(),
+                                                           tag))
+    features_list.append(features.get_prevTag_currLetter_tag(history.get_prev_label1(),
+                                                             history.get_current_letter(),
+                                                             tag))
+    features_list.append(features.get_currWord_tag(history.get_curr_word(),
+                                                   tag))
+    features_list.append(features.get_prevWord_currWord_tag(history.get_prev_word(),
+                                                            history.get_curr_word(),
+                                                            tag))
+    features_list.append(calcGlobalFeatures(history))
+
+    return hstack(features_list, format="csr")
 
 
 # TESTING
-test = FeaturesMatrix()
-matrx1 = test.currLetter_tag[(1, 2)]
-matrx2 = test.currLetter_tag[(15, 2)]
-print(matrx1.toarray())
-print(matrx2.toarray())
-matrxTOT = hstack([matrx1, matrx2], format="csr")
-print(matrxTOT.toarray())
+sentence = [letterToID['و'], letterToID['ل'], letterToID['و'], letterToID[' '],
+            letterToID['ت'], letterToID['ر'], letterToID['ك'], letterToID[' '],
+            letterToID['خ'], letterToID['ش'], letterToID['ع']]
+histTest = History(2, 5, sentence, 4)
 
+test = FeaturesMatrix()
+
+print(generateFeatures(test, histTest, 3))
