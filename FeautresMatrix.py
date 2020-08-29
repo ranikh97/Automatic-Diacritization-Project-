@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, hstack
 
 with open('Dataset_with_shaddah/id_to_letter.pickle', 'rb') as file:
     letterIDs = pickle.load(file)
@@ -141,7 +141,16 @@ def globalFeatures(self, history):
     return csr_matrix((data, (row, col)), shape=(1, 4), dtype=np.int8)
 
 
+def generateFeatures(history, tag):
+    pass
+
+
 # TESTING
-# test = FeaturesMatrix()
-# matrx = test.prevLetter_currLetter_tag[(1, 1, 2)]
-# print(matrx.toarray())
+test = FeaturesMatrix()
+matrx1 = test.prevLetter_tag[(1, 2)]
+matrx2 = test.prevLetter_tag[(15, 2)]
+print(matrx1.toarray())
+print(matrx2.toarray())
+matrxTOT = hstack(matrx1, matrx2)
+print(matrxTOT.toarray())
+
