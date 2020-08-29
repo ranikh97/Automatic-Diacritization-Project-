@@ -16,12 +16,12 @@ class History:
         self.current_word, self.prev_word, self.next_word, self.position_in_word = self.__parse_words()
 
         if position == 0:
-            self.prevLetter = None
+            self.prevLetter = letterMap['*']
         else:
             self.prevLetter = sentence[position-1]
 
         if position == len(sentence):
-            self.nextLetter = None
+            self.nextLetter = "STOP"
         else:
             self.nextLetter = sentence[position+1]
 
