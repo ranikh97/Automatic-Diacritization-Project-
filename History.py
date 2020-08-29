@@ -1,16 +1,19 @@
 import pickle
 
+# Global constants
+skipStars = 2
+
 with open('Dataset_with_shaddah/letter_to_id.pickle', 'rb') as file:
     letterMap = pickle.load(file)
 
 
 class History:
-    def __init__(self, prevLable1, prevLable2, sentence, position):
-        self.prevLabel1 = prevLable1
-        self.prevLabel2 = prevLable2
+    def __init__(self, prevLabel1, prevLabel2, sentence, position):
+        self.prevLabel1 = prevLabel1
+        self.prevLabel2 = prevLabel2
         self.sentence = sentence
-        self.position = position
-        self.current_word, self.prev_word, self.next_word, self.position_in_word = self.__parse_words(sentence, position)
+        self.position = position + skipStars
+        self.current_word, self.prev_word, self.next_word, self.position_in_word = self.__parse_words()
 
         if position == 0:
             self.prevLetter = None
@@ -22,55 +25,54 @@ class History:
         else:
             self.nextLetter = sentence[position+1]
 
-    def __parse_words(self, sentence, position):
+    def __parse_words(self):
         prev_space_position = None
-        word_begin_position = 0
-        position_in_word = 0
+        word_begin_position = skipStars
 
-        i = 0
-        if sentence[0] == letterMap[' ']:
-            i = 1
+        i = skipStars
+        if self.sentence[skipStars] == letterMap[' ']:
+            i = skipStars + 1
 
-        while i < position:
-            if sentence[i] == letterMap[' ']:
+        while i < self.position:
+            if self.sentence[i] == letterMap[' ']:
                 prev_space_position = word_begin_position
                 word_begin_position = i
             i += 1
 
-        if word_begin_position == 0 and sentence[0] != letterMap[' ']:
-            word_begin_position = -1
-            position_in_word = position
+        if word_begin_position == skipStars and self.sentence[skipStars] != letterMap[' ']:
+            word_begin_position = skipStars - 1
+            position_in_word = self.position - skipStars
         else:
-            position_in_word = position - word_begin_position - 1
+            position_in_word = self.position - word_begin_position - 1
 
-        word_end_position = len(sentence) - 1
-        while i < len(sentence):
-            if sentence[i] == letterMap[' ']:
+        word_end_position = len(self.sentence) - 1
+        while i < len(self.sentence):
+            if self.sentence[i] == letterMap[' ']:
                 word_end_position = i
                 break
             i += 1
 
         next_word_end_position = i
-        if i == len(sentence):
-            word_end_position = len(sentence)
+        if i == len(self.sentence):
+            word_end_position = len(self.sentence)
             next_word = []
         else:
             i += 1
-            while i < len(sentence):
-                if sentence[i] == letterMap[' ']:
+            while i < len(self.sentence):
+                if self.sentence[i] == letterMap[' ']:
                     next_word_end_position = i
                     break
                 i += 1
-            if i == len(sentence):
-                next_word_end_position = len(sentence)
-            next_word = sentence[word_end_position+1:next_word_end_position]
+            if i == len(self.sentence):
+                next_word_end_position = len(self.sentence)
+            next_word = self.sentence[word_end_position+1:next_word_end_position]
 
-        current_word = sentence[word_begin_position+1:word_end_position]
+        current_word = self.sentence[word_begin_position+1:word_end_position]
 
-        if word_begin_position == -1:
+        if word_begin_position == skipStars-1:
             prev_word = []
         else:
-            prev_word = sentence[prev_space_position:word_begin_position]
+            prev_word = self.sentence[prev_space_position:word_begin_position]
 
         return current_word, prev_word, next_word, position_in_word
 
