@@ -3,7 +3,7 @@ import pickle
 # Global constants
 skipStars = 2
 
-with open('Dataset_with_shaddah/letter_to_id.pickle', 'rb') as file:
+with open('Dataset_with_shaddah/letter_to_id_memm.pickle', 'rb') as file:
     letterMap = pickle.load(file)
 
 

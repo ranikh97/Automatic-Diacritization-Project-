@@ -2,11 +2,11 @@ import numpy as np
 import pickle
 from scipy.sparse import csr_matrix, hstack
 
-with open('Dataset_with_shaddah/id_to_letter.pickle', 'rb') as file:
+with open('Dataset_with_shaddah/id_to_letter_memm.pickle', 'rb') as file:
     letterIDs = pickle.load(file)
-with open('Dataset_with_shaddah/id_to_diacritic.pickle', 'rb') as file2:
+with open('Dataset_with_shaddah/id_to_diacritic_memm.pickle', 'rb') as file2:
     diacriticIDs = pickle.load(file2)
-with open('Dataset_with_shaddah/id_to_word.pickle', 'rb') as file3:
+with open('Dataset_with_shaddah/id_to_word_memm.pickle', 'rb') as file3:
     wordIDs = pickle.load(file3)
 with open('Dataset_with_shaddah/word_count.pickle', 'rb') as file4:
     wordCounts = pickle.load(file4)
