@@ -95,12 +95,12 @@ class FeaturesMatrix:
                     csr_matrix((data, (row, col)), shape=(self.wordsNum, self.diacriticsNum), dtype=np.int8)
 
         # Create <previous word, current word, tag> feature
-        for prevWord2 in wordIDs.keys():
-            for prevWord in wordIDs.keys():
+        for prevWord in wordIDs.keys():
+            for currWord in wordIDs.keys():
                 for diacritic in diacriticIDs.keys():
-                    row = np.array([self.wordsNum * prevWord2 + prevWord])
+                    row = np.array([self.wordsNum * prevWord + currWord])
                     col = np.array([diacritic])
-                    self.prevWord_currWord_tag[(prevWord2, prevWord, diacritic)] = \
+                    self.prevWord_currWord_tag[(prevWord, currWord, diacritic)] = \
                         csr_matrix((data, (row, col)),
                                    shape=(self.wordsNum**2, self.diacriticsNum),
                                    dtype=np.int8)
