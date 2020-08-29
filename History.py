@@ -101,9 +101,10 @@ class History:
 # TESTING
 """
 sentence = [11, 12, 3, 2, 1, 10, 21, 2, 112, 412]
-histTest = History('a', 'u', sentence, 8)
+histTest = History('a', 'u', sentence, 1)
 print("Next Letter: ", histTest.get_next_letter())
 print("Curr Word: ", histTest.get_curr_word())
 print("Next Word: ", histTest.get_next_word())
+print("Prev Word: ", histTest.get_prev_word())
 print("Position in Word: ", histTest.get_position_in_word())
 """
