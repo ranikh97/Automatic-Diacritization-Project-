@@ -1,7 +1,7 @@
 import pickle
 
 # Global constants
-skipStars = 2
+skipStars = 0   # NOT USED
 
 with open('Dataset_with_shaddah/letter_to_id_memm.pickle', 'rb') as file:
     letterMap = pickle.load(file)
@@ -20,7 +20,7 @@ class History:
         else:
             self.prevLetter = sentence[position-1]
 
-        if position == len(sentence):
+        if position == len(sentence) - 1:
             self.nextLetter = "STOP"
         else:
             self.nextLetter = sentence[position+1]
@@ -101,12 +101,11 @@ class History:
         return self.position_in_word
 
 # TESTING
-"""
-sentence = [11, 12, 3, 2, 1, 10, 21, 2, 112, 412]
-histTest = History('a', 'u', sentence, 1)
-print("Next Letter: ", histTest.get_next_letter())
-print("Curr Word: ", histTest.get_curr_word())
-print("Next Word: ", histTest.get_next_word())
-print("Prev Word: ", histTest.get_prev_word())
-print("Position in Word: ", histTest.get_position_in_word())
-"""
+# sentence = [11, 12, 3, 2, 1, 10, 21, 2, 112, 412]
+# histTest = History('a', 'u', sentence, 9)
+# print("Next Letter: ", histTest.get_next_letter())
+# print("Prev Letter: ", histTest.get_prev_letter())
+# print("Curr Word: ", histTest.get_curr_word())
+# print("Next Word: ", histTest.get_next_word())
+# print("Prev Word: ", histTest.get_prev_word())
+# print("Position in Word: ", histTest.get_position_in_word())
