@@ -42,6 +42,8 @@ class History:
                 prev_space_position = word_begin_position
                 word_begin_position = i
             i += 1
+        if prev_space_position == skipStars:
+            prev_space_position -= 1
 
         if word_begin_position == skipStars and self.sentence[skipStars] != letterMap[' ']:
             word_begin_position = skipStars - 1
@@ -136,8 +138,19 @@ class History:
 
 
 # TESTING
-# sentence = [11, 12, 3, 2, 1, 10, 21, 2, 23, 18]
-# histTest = History('a', 'u', sentence, 9)
+# sentence = [letterMap['ا'], letterMap['ل'], letterMap['و'], letterMap['ا'], letterMap['س'], letterMap['ط'], letterMap['ة'], letterMap[' '],
+#             letterMap['ب'], letterMap['ي'], letterMap['ن'], letterMap['ه'], letterMap[' '],
+#             letterMap['و'], letterMap['ب'], letterMap['ي'], letterMap['ن'], letterMap[' '],
+#             letterMap['ا'], letterMap['ل'], letterMap['ن'], letterMap['ب'], letterMap['ي'], letterMap[' '],
+#             letterMap['ص'], letterMap['ل'], letterMap['ى'], letterMap[' '],
+#             letterMap['ا'], letterMap['ل'], letterMap['ل'], letterMap['ه'], letterMap[' '],
+#             letterMap['ع'], letterMap['ل'], letterMap['ي'], letterMap['ه'], letterMap[' '],
+#             letterMap['و'], letterMap['س'], letterMap['ل'], letterMap['م'], letterMap[' '],
+#             letterMap['و'], letterMap['ل'], letterMap['ا'], letterMap[' '],
+#             letterMap['ب'], letterMap['د'], letterMap['ع'], letterMap[' '],
+#             letterMap['ف'], letterMap['ي'], letterMap[' '],
+#             letterMap['ذ'], letterMap['ل'], letterMap['ك']]
+# histTest = History(0, 1, sentence, 8)
 # print("Next Letter: ", histTest.get_next_letter())
 # print("Prev Letter: ", histTest.get_prev_letter())
 # print("Curr Word: ", histTest.get_curr_word())
