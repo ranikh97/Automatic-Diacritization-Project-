@@ -20,6 +20,15 @@ data = np.array([1])
 row = np.array([0])
 min_frequency = 5
 
+frequentWords = [id for id in wordIDs.keys() if wordCounts[wordIDs[id]] > 5]
+frequent_to_original_ID = {}
+original_to_frequent_ID = {}
+i = 0
+for word_id in frequentWords:
+    frequent_to_original_ID[i] = word_id
+    original_to_frequent_ID[word_id] = i
+    i += 1
+
 
 def to1D(x, y, z, xMax, yMax):
     return (z * xMax * yMax) + (y * xMax) + x
@@ -155,18 +164,18 @@ def get_prevTag_currLetter_tag(prevTag, currLetter, tag):
 
 def get_currWord_tag(currWord, tag):
     if wordCounts[wordIDs[currWord]] < min_frequency:
-        return csr_matrix((1, len(wordToID) * len(diacriticIDs)), dtype=np.int8)
+        return csr_matrix((1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
     else:
         col = np.array([currWord * len(diacriticIDs) + tag])
-        return csr_matrix((data, (row, col)), shape=(1, len(wordToID) * len(diacriticIDs)), dtype=np.int8)
+        return csr_matrix((data, (row, col)), shape=(1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
 
 
 def get_prevWord_currWord_tag(prevWord, currWord, tag):
     if wordCounts[wordIDs[currWord]] < min_frequency or wordCounts[wordIDs[prevWord]] < min_frequency:
-        return csr_matrix((1, len(wordToID)**2 * len(diacriticIDs)), dtype=np.int8)
+        return csr_matrix((1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
     else:
-        col = np.array([to1D(tag, currWord, prevWord, len(diacriticIDs), len(wordToID))])
-        return csr_matrix((data, (row, col)), shape=(1, len(wordToID)**2 * len(diacriticIDs)), dtype=np.int8)
+        col = np.array([to1D(tag, currWord, prevWord, len(diacriticIDs), len(frequentWords))])
+        return csr_matrix((data, (row, col)), shape=(1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
 
 
 def calcGlobalFeatures(history):
@@ -233,10 +242,10 @@ def generateFeatures(history: History, tag):
 
 
 # TESTING
-sentence = [letterToID['و'], letterToID['ل'], letterToID['و'], letterToID[' '],
-            letterToID['ت'], letterToID['ر'], letterToID['ك'], letterToID[' '],
-            letterToID['خ'], letterToID['ش'], letterToID['ع']]
-histTest = History(2, 5, sentence, 4)
-
-res = generateFeatures(histTest, 3)
-print(res)
+# sentence = [letterToID['و'], letterToID['ل'], letterToID['و'], letterToID[' '],
+#             letterToID['ت'], letterToID['ر'], letterToID['ك'], letterToID[' '],
+#             letterToID['خ'], letterToID['ش'], letterToID['ع']]
+# histTest = History(2, 5, sentence, 4)
+#
+# res = generateFeatures(histTest, 3)
+# print(res)
