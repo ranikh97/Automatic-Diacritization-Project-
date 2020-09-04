@@ -233,9 +233,9 @@ def generateFeatures(history: History, tag):
                                                     tag))
     features_list.append(get_currWord_tag(history.get_curr_word(),
                                                    tag))
-    features_list.append(get_prevWord_currWord_tag(history.get_prev_word(),
-                                                   history.get_curr_word(),
-                                                   tag))
+    # features_list.append(get_prevWord_currWord_tag(history.get_prev_word(),
+    #                                                history.get_curr_word(),
+    #                                                tag))
     features_list.append(calcGlobalFeatures(history))
 
     return hstack(features_list, format="csr")
