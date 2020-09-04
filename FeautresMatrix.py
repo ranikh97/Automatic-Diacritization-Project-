@@ -178,6 +178,38 @@ def get_prevWord_currWord_tag(prevWord, currWord, tag):
         return csr_matrix((data, (row, col)), shape=(1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
 
 
+def get_if_first_letter(history, tag):
+    if history.get_position_in_word() == 0:
+        col = np.array([tag])
+        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+    else:
+        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+
+
+def get_if_last_letter(history, tag):
+    if history.get_next_letter() in [letterToID[" "], letterToID["*"]]:
+        col = np.array([tag])
+        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+    else:
+        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+
+
+def get_if_first_word(history, tag):
+    if history.get_prev_word() == wordToID["*"]:
+        col = np.array([tag])
+        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+    else:
+        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+
+
+def get_if_last_word(history, tag):
+    if history.get_next_word() == wordToID["*"]:
+        col = np.array([tag])
+        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+    else:
+        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+
+
 def calcGlobalFeatures(history):
     indicators = []
     cols = []
@@ -236,7 +268,11 @@ def generateFeatures(history: History, tag):
     # features_list.append(get_prevWord_currWord_tag(history.get_prev_word(),
     #                                                history.get_curr_word(),
     #                                                tag))
-    features_list.append(calcGlobalFeatures(history))
+    # features_list.append(calcGlobalFeatures(history))
+    features_list.append(get_if_first_letter(history, tag))
+    features_list.append(get_if_last_letter(history, tag))
+    features_list.append(get_if_first_word(history, tag))
+    features_list.append(get_if_last_word(history, tag))
 
     return hstack(features_list, format="csr")
 
