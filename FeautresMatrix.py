@@ -194,7 +194,7 @@ def get_currWord_tag(currWord, tag):
         # col = np.array([currWord * len(diacriticIDs) + tag])
         # return csr_matrix((data, (row, col)), shape=(1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
         arr = np.zeros(len(frequentWords) * len(diacriticIDs))
-        col = currWord * len(diacriticIDs) + tag
+        col = original_to_frequent_ID[currWord] * len(diacriticIDs) + tag
         arr[col] = 1
         return arr
 
@@ -207,7 +207,7 @@ def get_prevWord_currWord_tag(prevWord, currWord, tag):
         # col = np.array([to1D(tag, currWord, prevWord, len(diacriticIDs), len(frequentWords))])
         # return csr_matrix((data, (row, col)), shape=(1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
         arr = np.zeros(len(frequentWords)**2 * len(diacriticIDs))
-        col = to1D(tag, currWord, prevWord, len(diacriticIDs), len(frequentWords))
+        col = to1D(tag, original_to_frequent_ID[currWord], prevWord, len(diacriticIDs), len(frequentWords))
         arr[col] = 1
         return arr
 
@@ -314,7 +314,7 @@ def generateFeatures(history: History, tag):
                                                     history.get_current_letter(),
                                                     tag))
     features_list.append(get_currWord_tag(history.get_curr_word(),
-                                                   tag))
+                                          tag))
     # features_list.append(get_prevWord_currWord_tag(history.get_prev_word(),
     #                                                history.get_curr_word(),
     #                                                tag))
@@ -329,10 +329,8 @@ def generateFeatures(history: History, tag):
 
 
 # TESTING
-# sentence = [letterToID['و'], letterToID['ل'], letterToID['و'], letterToID[' '],
-#             letterToID['ت'], letterToID['ر'], letterToID['ك'], letterToID[' '],
-#             letterToID['خ'], letterToID['ش'], letterToID['ع']]
-# histTest = History(2, 5, sentence, 4)
-#
-# res = generateFeatures(histTest, 3)
-# print(res)
+sentence = [14, 20, 7, 29, 7, 16, 10, 2, 12, 16, 2, 0, 27, 28, 18]
+histTest = History(16, 16, sentence, 0)
+
+res = generateFeatures(histTest, 3)
+print(res)
