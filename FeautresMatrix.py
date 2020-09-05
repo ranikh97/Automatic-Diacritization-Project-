@@ -329,8 +329,8 @@ def generateFeatures(history: History, tag):
 
 
 # TESTING
-sentence = [14, 20, 7, 29, 7, 16, 10, 2, 12, 16, 2, 0, 27, 28, 18]
-histTest = History(16, 16, sentence, 0)
-
-res = generateFeatures(histTest, 3)
-print(res)
+# sentence = [14, 20, 7, 29, 7, 16, 10, 2, 12, 16, 2, 0, 27, 28, 18]
+# histTest = History(16, 16, sentence, 0)
+#
+# res = generateFeatures(histTest, 3)
+# print(res)
