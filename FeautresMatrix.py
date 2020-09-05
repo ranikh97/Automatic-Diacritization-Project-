@@ -133,81 +133,131 @@ def to1D(x, y, z, xMax, yMax):
 #                                    dtype=np.int8)
 
 def get_currLetter_tag(letter, tag):
-    col = np.array([len(diacriticIDs) * letter + tag])
-    return csr_matrix((data, (row, col)), shape=(1, len(letterIDs)*len(diacriticIDs)), dtype=np.int8)
+    # col = np.array([len(diacriticIDs) * letter + tag])
+    # return csr_matrix((data, (row, col)), shape=(1, len(letterIDs) * len(diacriticIDs)), dtype=np.int8)
+    arr = np.zeros(len(letterIDs) * len(diacriticIDs))
+    col = [len(diacriticIDs) * letter + tag]
+    arr[col] = 1
+    return arr
 
 
 def get_prevLetter_currLetter_tag(prevLetter, currLetter, tag):
-    col = np.array([to1D(tag, currLetter, prevLetter, len(diacriticIDs), len(letterIDs))])
-    return csr_matrix((data, (row, col)), shape=(1, len(letterIDs)**2 * len(diacriticIDs)), dtype=np.int8)
+    arr = np.zeros(len(letterIDs)**2 * len(diacriticIDs))
+    col = to1D(tag, currLetter, prevLetter, len(diacriticIDs), len(letterIDs))
+    arr[col] = 1
+    return arr
+    # col = np.array([to1D(tag, currLetter, prevLetter, len(diacriticIDs), len(letterIDs))])
+    # return csr_matrix((data, (row, col)), shape=(1, len(letterIDs)**2 * len(diacriticIDs)), dtype=np.int8)
 
 
 def get_currLetter_nextLetter_tag(currLetter, nextLetter, tag):
-    col = np.array([to1D(tag, nextLetter, currLetter, len(diacriticIDs), len(letterIDs))])
-    return csr_matrix((data, (row, col)), shape=(1, len(letterIDs)**2 * len(diacriticIDs)), dtype=np.int8)
+    # col = np.array([to1D(tag, nextLetter, currLetter, len(diacriticIDs), len(letterIDs))])
+    # return csr_matrix((data, (row, col)), shape=(1, len(letterIDs)**2 * len(diacriticIDs)), dtype=np.int8)
+    arr = np.zeros(len(letterIDs)**2 * len(diacriticIDs))
+    col = to1D(tag, nextLetter, currLetter, len(diacriticIDs), len(letterIDs))
+    arr[col] = 1
+    return arr
 
 
 def get_prevTag_tag(prevTag, tag):
-    col = np.array([prevTag * len(diacriticIDs) + tag])
-    return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)**2), dtype=np.int8)
+    # col = np.array([prevTag * len(diacriticIDs) + tag])
+    # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)**2), dtype=np.int8)
+    arr = np.zeros(len(diacriticIDs)**2)
+    col = prevTag * len(diacriticIDs) + tag
+    arr[col] = 1
+    return arr
 
 
 def get_prevTag2_prevTag_tag(prevTag2, prevTag, tag):
-    col = np.array([to1D(tag, prevTag, prevTag2, len(diacriticIDs), len(diacriticIDs))])
-    return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)**3), dtype=np.int8)
+    # col = np.array([to1D(tag, prevTag, prevTag2, len(diacriticIDs), len(diacriticIDs))])
+    # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)**3), dtype=np.int8)
+    arr = np.zeros(len(diacriticIDs)**3)
+    col = to1D(tag, prevTag, prevTag2, len(diacriticIDs), len(diacriticIDs))
+    arr[col] = 1
+    return arr
 
 
 def get_prevTag_currLetter_tag(prevTag, currLetter, tag):
-    col = np.array([to1D(tag, currLetter, prevTag, len(diacriticIDs), len(letterIDs))])
-    return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)**2 * len(letterIDs)), dtype=np.int8)
+    # col = np.array([to1D(tag, currLetter, prevTag, len(diacriticIDs), len(letterIDs))])
+    # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)**2 * len(letterIDs)), dtype=np.int8)
+    arr = np.zeros(len(diacriticIDs)**2 * len(letterIDs))
+    col = to1D(tag, currLetter, prevTag, len(diacriticIDs), len(letterIDs))
+    arr[col] = 1
+    return arr
 
 
 def get_currWord_tag(currWord, tag):
     if wordCounts[wordIDs[currWord]] < min_frequency:
-        return csr_matrix((1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
+        # return csr_matrix((1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
+        return np.zeros(len(frequentWords) * len(diacriticIDs))
     else:
-        col = np.array([currWord * len(diacriticIDs) + tag])
-        return csr_matrix((data, (row, col)), shape=(1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
+        # col = np.array([currWord * len(diacriticIDs) + tag])
+        # return csr_matrix((data, (row, col)), shape=(1, len(frequentWords) * len(diacriticIDs)), dtype=np.int8)
+        arr = np.zeros(len(frequentWords) * len(diacriticIDs))
+        col = currWord * len(diacriticIDs) + tag
+        arr[col] = 1
+        return arr
 
 
 def get_prevWord_currWord_tag(prevWord, currWord, tag):
     if wordCounts[wordIDs[currWord]] < min_frequency or wordCounts[wordIDs[prevWord]] < min_frequency:
-        return csr_matrix((1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
+        # return csr_matrix((1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
+        return np.zeros(len(frequentWords)**2 * len(diacriticIDs))
     else:
-        col = np.array([to1D(tag, currWord, prevWord, len(diacriticIDs), len(frequentWords))])
-        return csr_matrix((data, (row, col)), shape=(1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
+        # col = np.array([to1D(tag, currWord, prevWord, len(diacriticIDs), len(frequentWords))])
+        # return csr_matrix((data, (row, col)), shape=(1, len(frequentWords)**2 * len(diacriticIDs)), dtype=np.int8)
+        arr = np.zeros(len(frequentWords)**2 * len(diacriticIDs))
+        col = to1D(tag, currWord, prevWord, len(diacriticIDs), len(frequentWords))
+        arr[col] = 1
+        return arr
 
 
 def get_if_first_letter(history, tag):
     if history.get_position_in_word() == 0:
-        col = np.array([tag])
-        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        # col = np.array([tag])
+        # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        arr = np.zeros(len(diacriticIDs))
+        arr[tag] = 1
+        return arr
     else:
-        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        # return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        return np.zeros(len(diacriticIDs))
 
 
 def get_if_last_letter(history, tag):
     if history.get_next_letter() in [letterToID[" "], letterToID["*"]]:
-        col = np.array([tag])
-        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        # col = np.array([tag])
+        # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        arr = np.zeros(len(diacriticIDs))
+        arr[tag] = 1
+        return arr
     else:
-        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        # return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        return np.zeros(len(diacriticIDs))
 
 
 def get_if_first_word(history, tag):
     if history.get_prev_word() == wordToID["*"]:
-        col = np.array([tag])
-        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        # col = np.array([tag])
+        # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        arr = np.zeros(len(diacriticIDs))
+        arr[tag] = 1
+        return arr
     else:
-        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        # return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        return np.zeros(len(diacriticIDs))
 
 
 def get_if_last_word(history, tag):
     if history.get_next_word() == wordToID["*"]:
-        col = np.array([tag])
-        return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        # col = np.array([tag])
+        # return csr_matrix((data, (row, col)), shape=(1, len(diacriticIDs)), dtype=np.int8)
+        arr = np.zeros(len(diacriticIDs))
+        arr[tag] = 1
+        return arr
     else:
-        return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        # return csr_matrix((1, len(diacriticIDs)), dtype=np.int8)
+        return np.zeros(len(diacriticIDs))
 
 
 def calcGlobalFeatures(history):
@@ -274,7 +324,8 @@ def generateFeatures(history: History, tag):
     features_list.append(get_if_first_word(history, tag))
     features_list.append(get_if_last_word(history, tag))
 
-    return hstack(features_list, format="csr")
+    # return hstack(features_list, format="csr")
+    return np.concatenate(tuple(features_list))
 
 
 # TESTING
