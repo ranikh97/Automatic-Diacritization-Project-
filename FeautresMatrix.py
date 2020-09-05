@@ -20,7 +20,7 @@ data = np.array([1])
 row = np.array([0])
 min_frequency = 5
 
-frequentWords = [id for id in wordIDs.keys() if wordCounts[wordIDs[id]] > 5]
+frequentWords = [id for id in wordIDs.keys() if wordCounts[wordIDs[id]] >= min_frequency]
 frequent_to_original_ID = {}
 original_to_frequent_ID = {}
 i = 0
@@ -329,8 +329,8 @@ def generateFeatures(history: History, tag):
 
 
 # TESTING
-# sentence = [14, 20, 7, 29, 7, 16, 10, 2, 12, 16, 2, 0, 27, 28, 18]
-# histTest = History(16, 16, sentence, 0)
+# sentence = [0, 1, 0, 2, 12, 28, 26, 18, 2, 6, 4, 2, 12, 29, 8, 22, 18, 2, 12, 0, 2, 33, 34, 14, 18, 2, 20, 1, 32, 8, 16, 9, 18, 2, 12, 10, 2, 16, 8, 3, 5, 2, 5, 1, 16, 18, 2, 14, 11, 1, 21, 3, 4, 11, 5, 2, 0, 9, 26, 1, 9, 2, 1, 0, 2, 22, 14, 25, 2, 14, 32, 8, 11, 31, 2, 20, 11, 27, 17, 2, 20, 14, 11, 5, 18, 2, 12, 0, 2, 12, 5, 7, 22, 18, 2, 12, 0, 2, 18, 1, 9, 2, 5, 10, 17, 18, 2, 0, 1, 0, 2, 11, 8, 7, 18, 10, 2, 12, 29, 17, 18, 4, 11, 2, 14, 29, 34, 7, 18, 2, 20, 18, 1, 9, 2, 5, 10, 17, 18, 2, 20, 1, 32, 8, 16, 9, 18, 2, 12, 10, 2, 16, 25, 4, 10, 18, 2, 9, 26, 11, 2, 20, 16, 2, 4, 29, 16, 15, 2, 11, 1, 27, 8, 28, 27, 16]
+# histTest = History(0, 2, sentence, 111)
 #
 # res = generateFeatures(histTest, 3)
 # print(res)
