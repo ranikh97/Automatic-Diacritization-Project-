@@ -6,4 +6,4 @@ jupyter==1.0.0
 pyarabic==0.6.8
 scipy~=1.5.2
 pytorch-crf==0.7.2
-tqdm==4.48.2
+tqdm==4.66.3
