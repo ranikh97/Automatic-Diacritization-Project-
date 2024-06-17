@@ -1,6 +1,6 @@
 pandas==1.0.3
 numpy~=1.18.1
-scikit-learn==0.22.2
+scikit-learn==1.5.0
 matplotlib==3.2.1
 jupyter==1.0.0
 pyarabic==0.6.8
